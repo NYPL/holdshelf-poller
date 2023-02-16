@@ -1,0 +1,4 @@
+boto3
+pyyaml
+nypl-py-utils==0.0.5
+redis
