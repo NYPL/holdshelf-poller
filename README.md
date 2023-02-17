@@ -54,7 +54,7 @@ make lint
 ```
 
 ## Troubleshooting
-### Troubleshooting psycopg2 "ImportError: no pq wrapper available."
+### Troubleshooting psycopg "ImportError: no pq wrapper available."
 
 In OSX, if you have a `/usr/local/opt/libpq/lib` and xcode installed, but get above error when running the app locally, you [may need to](https://stackoverflow.com/questions/70585068/how-do-i-get-libpq-to-be-found-by-ctypes-find-library) install the `psycopg` this way:
 
@@ -63,7 +63,7 @@ pip uninstall psycopg
 pip install "psycopg[c]"
 ```
 
-### Troubleshooting psycopg2 "library not found for -lssl"
+### Troubleshooting psycopg "library not found for -lssl"
 
 Try first:
 ```
