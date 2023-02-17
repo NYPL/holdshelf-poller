@@ -18,7 +18,9 @@ class TestRedisClient:
 
     @pytest.fixture
     def mock_redis_get(self, mocker):
-        return mocker.patch('redis.Redis.get')
+        mock = mocker.patch('redis.Redis.get')
+        mock.return_value = None
+        return mock
 
     @pytest.fixture
     def mock_redis_set(self, mocker):
