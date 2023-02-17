@@ -15,14 +15,18 @@ class RedisClient:
 
     def get_hold_processed(self, entry):
         key = self.key_for_hold(entry)
-        result = self.base_client.get(key)
+        try:
+            result = self.base_client.get(key)
+        except redis.exceptions.ConnectionError as error:
+            self.logger.error(f'Error getting {key} from Redis: {error}')
+            raise error
+
         if result is not None:
             self.logger.debug(
                 '  Skip hold {}, already processed on {}'
                 .format(entry['hold_id'], result)
             )
-        print('Result: {}'.format(result))
-        return type(result) == str
+        return result is not None
 
     def set_hold_processed(self, entry):
         key = self.key_for_hold(entry)
