@@ -14,6 +14,7 @@ class RedisClient:
             .format(entry['hold_id'])
 
     def get_hold_processed(self, entry):
+        """Return True if given hold has been processed. False otherwise."""
         key = self.key_for_hold(entry)
         try:
             result = self.base_client.get(key)
@@ -29,6 +30,7 @@ class RedisClient:
         return result is not None
 
     def set_hold_processed(self, entry):
+        """Record given holdshelf entry as having been processed"""
         key = self.key_for_hold(entry)
         timestamp = datetime.datetime.utcnow().isoformat()
         self.base_client.set(key, timestamp)

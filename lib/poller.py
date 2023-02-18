@@ -15,22 +15,37 @@ class Poller:
         self.redis_client = RedisClient()
 
     def poll(self):
-        self.logger.debug('Starting polling')
+        """Retrieve holdshelf entries from Sierra, remove processed entries,
+        and send notifications for what remains.
+        """
+        self.logger.info('Starting polling')
 
         entries = self.sierra_client.holdshelf_entries()
-        entries = [entry for entry in entries if self.unprocessed(entry)]
+
+        self.logger.info(f'Found {len(entries)} holdshelf entries')
+        try:
+            entries = [entry for entry in entries if self.unprocessed(entry)]
+        except Exception as error:
+            self.logger.error(f'Redis read error; Aborting. Error: {error}')
+            return
 
         self.send_notifications(entries)
 
-        self.logger.debug('Done polling')
+        self.logger.info('Done polling')
 
     def unprocessed(self, entry):
+        """Returns true if given entry is not yet processed"""
         return not self.redis_client.get_hold_processed(entry)
 
     def send_notifications(self, entries):
+        """Send notifications for array of holdshelf entries"""
         if len(entries) == 0:
-            print('No notifications to send')
+            self.logger.info('No notifications to send')
             return
+
+        self.logger.info(
+            f'Sending notifications for {len(entries)} unprocessed ' +
+            'holdshelf entries')
 
         print('Report on holdshelf events:')
         for entry in entries:

@@ -16,6 +16,14 @@ class SierraDbClient:
         self.logger = create_log('sierra_db_client')
 
     def holdshelf_entries(self):
+        """Get latest holdshelf entries from Sierra DB
+
+        Returns
+        -------
+        list
+            List of dicts representing items on holdshelf
+        """
+
         self.base_client.connect()
 
         # Cast rows to dicts:
@@ -49,12 +57,23 @@ class SierraDbClient:
 
         sierra_raw_data = self.base_client.execute_query(query)
 
-        # print(sierra_raw_data[0])
-
         self.base_client.close_connection()
 
         return sierra_raw_data
 
-    def _sql_string_list(self, a):
-        quoted_array = ("'{}'".format(code) for code in a)
-        return ','.join(quoted_array)
+    @staticmethod
+    def _sql_string_list(arr):
+        """Return string representation of given list suitable for use in a
+        SQL IN clause
+
+        Parameters
+        ----------
+        arr : list
+            Array of scalar values
+
+        Returns
+        -------
+        str
+            Single-quoted, comma separated values. e.g. "'v1','v2','v3'"
+        """
+        return ','.join(f"'{code}'" for code in arr)

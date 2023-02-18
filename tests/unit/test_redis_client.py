@@ -41,7 +41,7 @@ class TestRedisClient:
     def test_hold_set_processed(self, mock_redis_get, mock_redis_set, mocker):
         redis = RedisClient()
 
-        redis.set_hold_processed({'hold_id': 1}) is False
+        redis.set_hold_processed({'hold_id': 1})
 
         assert mock_redis_set.call_args.args \
             == ('item-status-listener-processed-hold-1', '2023-01-01T01:00:00')

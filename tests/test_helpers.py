@@ -12,7 +12,9 @@ class TestHelpers:
         'SIERRA_DB_USER': 'test_sierra_user',
         'SIERRA_DB_PASSWORD': 'test_sierra_password',
         'REDIS_HOST': '127.0.0.1',
-        'REDIS_PORT': '6739'
+        'REDIS_PORT': '6739',
+        'HOLDING_LOCATION_CODES': 'mal92,mal98',
+        'PICKUP_LOCATION_CODES': 'mal'
     }
 
     @classmethod
