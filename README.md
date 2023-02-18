@@ -33,6 +33,7 @@ To build a set of local test data for the `development` environment:
 ```
 psql -c 'CREATE DATABASE sierra_local_item_status_listener';
 psql sierra_local_item_status_listener < sierra-schema.sql
+AWS_PROFILE=nypl-digital-dev ENVIRONMENT=development python create_test_data.py
 ```
 
 To run the app against local test data:
