@@ -13,6 +13,7 @@ import datetime
 
 from nypl_py_utils import PostgreSQLClient, PostgreSQLClientError
 from nypl_py_utils.functions.config_helper import load_env_file
+from nypl_py_utils.functions.log_helper import create_log
 
 HOLDS = [
     [1, 10001, 'i', 'YYYY-MM-DDT08:11:01', 'mal'],
@@ -37,6 +38,7 @@ class CreateTestData:
             os.environ['SIERRA_DB_PASSWORD']
         )
         self.sierra_client.connect()
+        self.logger = create_log('redis_client')
 
     def disconnect(self):
         self.sierra_client.close_connection()
@@ -45,7 +47,7 @@ class CreateTestData:
         values_str = ', '.join(['%s' for n in range(len(row))])
         query = 'INSERT INTO sierra_view.{} VALUES ({})'.format(
             table, values_str)
-        print(' => {} < {}'.format(query, row))
+        self.logger.info(' => {} < {}'.format(query, row))
         self.db_query(query, row)
 
     def db_query(self, query, data=None):
@@ -54,7 +56,7 @@ class CreateTestData:
                 conn.execute(query, data)
             except Exception as e:
                 conn.rollback()
-                print(
+                self.logger.error(
                     ('Error executing database query \'{query}\': '
                      '{error}').format(query=query, error=e))
                 raise PostgreSQLClientError(
@@ -64,11 +66,11 @@ class CreateTestData:
     def create_test_data(self):
         self.connect()
 
-        print('Truncating tables')
+        self.logger.info('Truncating tables')
         for table in ['hold', 'item_view']:
             self.db_query('TRUNCATE TABLE sierra_view.{}'.format(table))
 
-        print('Filling tables')
+        self.logger.info('Filling tables')
         for row in ITEMS:
             self.insert_data('item_view', row)
         for row in HOLDS:
