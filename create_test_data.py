@@ -44,10 +44,10 @@ class CreateTestData:
         self.sierra_client.close_connection()
 
     def insert_data(self, table, row):
-        values_str = ', '.join(['%s' for n in range(len(row))])
+        value_placeholders_str = ', '.join(['%s' for n in range(len(row))])
         query = 'INSERT INTO sierra_view.{} VALUES ({})'.format(
-            table, values_str)
-        self.logger.info(' => {} < {}'.format(query, row))
+            table, value_placeholders_str)
+        self.logger.debug(f' => {query} < {row}')
         self.db_query(query, row)
 
     def db_query(self, query, data=None):
