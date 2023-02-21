@@ -24,7 +24,7 @@ class Poller:
 
         self.logger.info(f'Found {len(entries)} holdshelf entries')
         try:
-            entries = [entry for entry in entries if self.unprocessed(entry)]
+            entries = list(filter(self.unprocessed, entries))
         except Exception as error:
             self.logger.error(f'Redis read error; Aborting. Error: {error}')
             return
