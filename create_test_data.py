@@ -74,7 +74,7 @@ class CreateTestData:
         for row in ITEMS:
             self.insert_data('item_view', row)
         for row in HOLDS:
-            current_date = datetime.datetime.utcnow().isoformat().split('T')[0]
+            current_date = datetime.date.today().isoformat()
             row[3] = row[3].replace('YYYY-MM-DD', current_date)
             self.insert_data('hold', row)
 
