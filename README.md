@@ -18,8 +18,8 @@ docker container run -e ENVIRONMENT=development holdshelf-poller:local
 Or for development in OSX:
 ```
 pyenv local 3.10
-python -m venv venv
-source venv/bin/activate
+python -m venv localenv
+source localenv/bin/activate
 pip install -r dev-requirements.txt
 pip install -r requirements.txt
 ```
