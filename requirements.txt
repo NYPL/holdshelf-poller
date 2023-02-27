@@ -1,4 +1,4 @@
 boto3
 pyyaml
-nypl-py-utils==0.0.5
+nypl-py-utils==0.0.6
 redis

@@ -48,7 +48,8 @@ class CreateTestData:
         query = 'INSERT INTO sierra_view.{} VALUES ({})'.format(
             table, value_placeholders_str)
         self.logger.debug(f' => {query} < {row}')
-        self.db_query(query, row)
+        self.sierra_client.execute_query(query, query_params=row,
+                                         is_write_query=True)
 
     def db_query(self, query, data=None):
         with self.sierra_client.pool.connection() as conn:

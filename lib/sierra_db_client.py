@@ -26,10 +26,6 @@ class SierraDbClient:
 
         self.base_client.connect()
 
-        # Cast rows to dicts:
-        with self.base_client.pool.connection() as conn:
-            conn.row_factory = dict_row
-
         min_placed_gmt = "DATE(NOW()) - INTERVAL '1 DAYS'"
         # min_placed_gmt = "'2022-07-05 19:22:29-04'"
 
@@ -55,7 +51,8 @@ class SierraDbClient:
                 holding_location_codes=self._sql_string_list(holding_locations)
             )
 
-        sierra_raw_data = self.base_client.execute_query(query)
+        sierra_raw_data = self.base_client.execute_query(query,
+                                                         row_factory=dict_row)
 
         self.base_client.close_connection()
 
