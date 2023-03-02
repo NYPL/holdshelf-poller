@@ -1,5 +1,4 @@
 import pytest
-from freezegun import freeze_time
 
 from tests.test_helpers import TestHelpers
 from lib.poller import Poller
