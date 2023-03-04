@@ -16,8 +16,8 @@ from nypl_py_utils.functions.config_helper import load_env_file
 from nypl_py_utils.functions.log_helper import create_log
 
 HOLDS = [
-    [1, 10001, 'i', 'YYYY-MM-DDT08:11:01', 'mal'],
-    [2, 10002, 'i', 'YYYY-MM-DDT08:31:01', 'mal']
+    [1, 10001, 'i', 'YYYY-MM-DDT08:11:01', 'mal', 9001],
+    [2, 10002, 'i', 'YYYY-MM-DDT08:31:01', 'mal', 9002]
 ]
 
 ITEMS = [
@@ -25,11 +25,16 @@ ITEMS = [
     (10002, 102, 'maf92')
 ]
 
+PATRONS = [
+    (9001, 91),
+    (9002, 92)
+]
+
 
 class CreateTestData:
 
     def connect(self):
-        load_env_file(os.environ['ENVIRONMENT'], 'config/development.yaml')
+        load_env_file('', 'config/development.yaml')
         self.sierra_client = PostgreSQLClient(
             '127.0.0.1',
             os.environ['SIERRA_DB_PORT'],
@@ -68,12 +73,14 @@ class CreateTestData:
         self.connect()
 
         self.logger.info('Truncating tables')
-        for table in ['hold', 'item_view']:
+        for table in ['hold', 'item_view', 'patron_view']:
             self.db_query('TRUNCATE TABLE sierra_view.{}'.format(table))
 
         self.logger.info('Filling tables')
         for row in ITEMS:
             self.insert_data('item_view', row)
+        for row in PATRONS:
+            self.insert_data('patron_view', row)
         for row in HOLDS:
             current_date = datetime.date.today().isoformat()
             row[3] = row[3].replace('YYYY-MM-DD', current_date)
