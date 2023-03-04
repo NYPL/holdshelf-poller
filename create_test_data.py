@@ -3,7 +3,7 @@
 This is a script for generating test holdshelf events in the local psql db.
 
 Usage:
-    AWS_PROFILE=nypl-digital-dev ENVIRONMENT=development \
+    [AWS_PROFILE=nypl-digital-dev] \
         python create_test_data.py
 
 """

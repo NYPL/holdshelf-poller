@@ -28,6 +28,10 @@ class TestPoller:
     def sierra_holdshelf_entries(self, mocker):
         return mocker.patch('lib.poller.SierraDbClient.holdshelf_entries')
 
+    @pytest.fixture
+    def platform_api_client_post(self, mocker):
+        return mocker.patch('lib.poller.Oauth2ApiClient.post')
+
     def test_unprocessed_uses_redis(self, redis_get_hold_processed):
         # If RedisClient.get_hold_processed() returns false, Poller considers
         # it unprocessed
@@ -40,17 +44,27 @@ class TestPoller:
         assert Poller().unprocessed({'hold_id': 2}) is False
         redis_get_hold_processed.assert_called_with({'hold_id': 2})
 
-    def test_poll(
-            self, sierra_holdshelf_entries, redis_get_hold_processed, mocker):
+    def test_poll(self, sierra_holdshelf_entries, redis_get_hold_processed,
+                  mocker):
         send_notifications = mocker.patch(
                 'lib.poller.Poller.send_notifications')
-        sierra_holdshelf_entries.return_value = [{'hold_id': 1}]
+        mock_holds = [{'hold_id': 1, 'patron_id': 9001}]
+        sierra_holdshelf_entries.return_value = mock_holds
 
         Poller().poll()
 
-        sierra_holdshelf_entries.assert_called_once_with()
-        send_notifications.assert_called_once_with([{'hold_id': 1}])
+        # Verify poller fetches holdshelf entries:
+        sierra_holdshelf_entries.assert_called_once()
+        # Verify poller passes those entries on for notification:
+        send_notifications.assert_called_once_with(mock_holds)
 
-    def test_send_notifications(self, redis_set_hold_processed):
-        Poller().send_notifications([{'hold_id': 1}])
-        redis_set_hold_processed.assert_called_once_with({'hold_id': 1})
+    def test_send_notifications(self, redis_set_hold_processed,
+                                platform_api_client_post):
+        mock_holds = [{'hold_id': 1, 'patron_id': 9001}]
+        Poller().send_notifications(mock_holds)
+
+        # Verify we record hold processed in Redis:
+        redis_set_hold_processed.assert_called_once_with(mock_holds[0])
+        # Verify we post to PatronServices Notify endpoint:
+        platform_api_client_post.assert_called_once_with(
+                'patrons/9001/notify', {'holdId': 1, 'type': 'hold-ready'})

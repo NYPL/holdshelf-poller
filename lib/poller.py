@@ -1,6 +1,7 @@
 from lib.redis_client import RedisClient
 from lib.sierra_db_client import SierraDbClient
 from nypl_py_utils.functions.log_helper import create_log
+from nypl_py_utils import Oauth2ApiClient
 
 
 class Poller:
@@ -13,6 +14,7 @@ class Poller:
 
         self.sierra_client = SierraDbClient()
         self.redis_client = RedisClient()
+        self.platform_client = Oauth2ApiClient()
 
     def poll(self):
         """Retrieve holdshelf entries from Sierra, remove processed entries,
@@ -38,7 +40,7 @@ class Poller:
         return not self.redis_client.get_hold_processed(entry)
 
     def send_notifications(self, entries):
-        """Send notifications for array of holdshelf entries"""
+        """Triggers notifications for array of holdshelf entries"""
         if len(entries) == 0:
             self.logger.info('No notifications to send')
             return
@@ -47,7 +49,12 @@ class Poller:
             f'Sending notifications for {len(entries)} unprocessed ' +
             'holdshelf entries')
 
-        print('Report on holdshelf events:')
         for entry in entries:
-            print('  {}'.format(entry))
+            path = 'patrons/{}/notify'.format(entry['patron_id'])
+            payload = {'type': 'hold-ready', 'holdId': entry['hold_id']}
+
+            self.logger.debug(f'Posting to {path}: {payload}')
+            self.logger.info(f'Posting to {path}: {payload} => {self.platform_client.post}')
+            self.platform_client.post(path, payload)
+
             self.redis_client.set_hold_processed(entry)
