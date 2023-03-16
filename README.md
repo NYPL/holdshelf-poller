@@ -41,6 +41,11 @@ To run the app against local test data:
 AWS_PROFILE=nypl-digital-dev ENVIRONMENT=development python main.py
 ```
 
+Note test data is created with current timestamps, so if you see "Found 0 holdshelf entries", you may need to re-run the `create_test_data` command to generate fresh "holds":
+```
+AWS_PROFILE=nypl-digital-dev ENVIRONMENT=development python create_test_data.py
+```
+
 ## Contributing
 
 This repo uses the [Main-QA-Production Git Workflow](https://github.com/NYPL/engineering-general/blob/main/standards/git-workflow.md#main-qa-production)

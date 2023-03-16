@@ -34,6 +34,7 @@ class Poller:
         self.logger.info('Done polling')
 
     def unprocessed(self, entry):
+        return True
         """Returns true if given entry is not yet processed"""
         return not self.redis_client.get_hold_processed(entry)
 
@@ -49,5 +50,12 @@ class Poller:
 
         print('Report on holdshelf events:')
         for entry in entries:
-            print('  {}'.format(entry))
+            path = 'patrons/{}/notify'.format(entry['patron_id'])
+            payload = {'type': 'hold-ready', 'holdId': entry['hold_id']}
+
+            self.logger.debug(f'Posting to {path}: {payload}')
+            resp = self.platform_client.post(path, payload)
+            print(f'resp: {resp}')
+            import pdb; pdb.set_trace()
+
             self.redis_client.set_hold_processed(entry)
