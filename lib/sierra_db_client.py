@@ -38,7 +38,10 @@ class SierraDbClient:
               placed_gmt,
               I.record_num AS item_id,
               I.location_code AS item_location,
-              H.pickup_location_code AS pickup_location
+              H.pickup_location_code AS pickup_location,
+              ( SELECT _P.record_num FROM sierra_view.patron_view _P
+                WHERE _P.id=H.patron_record_id
+              ) AS patron_id
             FROM sierra_view.hold H
             INNER JOIN sierra_view.item_view I ON I.id=H.record_id
             WHERE H.status='i'
