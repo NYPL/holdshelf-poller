@@ -11,8 +11,7 @@ Usage:
 import os
 import datetime
 
-from nypl_py_utils.classes.postgresql_client \
-        import (PostgreSQLClient, PostgreSQLClientError)
+from nypl_py_utils.classes.postgresql_client import PostgreSQLClient
 from nypl_py_utils.functions.config_helper import load_env_file
 from nypl_py_utils.functions.log_helper import create_log
 
