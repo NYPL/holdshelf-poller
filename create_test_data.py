@@ -11,7 +11,8 @@ Usage:
 import os
 import datetime
 
-from nypl_py_utils import PostgreSQLClient, PostgreSQLClientError
+from nypl_py_utils.classes.postgresql_client \
+        import (PostgreSQLClient, PostgreSQLClientError)
 from nypl_py_utils.functions.config_helper import load_env_file
 from nypl_py_utils.functions.log_helper import create_log
 
@@ -53,21 +54,10 @@ class CreateTestData:
         query = 'INSERT INTO sierra_view.{} VALUES ({})'.format(
             table, value_placeholders_str)
         self.logger.debug(f' => {query} < {row}')
-        self.sierra_client.execute_query(query, query_params=row,
-                                         is_write_query=True)
+        self.db_query(query, row)
 
-    def db_query(self, query, data=None):
-        with self.sierra_client.pool.connection() as conn:
-            try:
-                conn.execute(query, data)
-            except Exception as e:
-                conn.rollback()
-                self.logger.error(
-                    ('Error executing database query \'{query}\': '
-                     '{error}').format(query=query, error=e))
-                raise PostgreSQLClientError(
-                    ('Error executing database query \'{query}\': '
-                     '{error}').format(query=query, error=e)) from None
+    def db_query(self, query, query_params=None):
+        self.sierra_client.execute_query(query, query_params)
 
     def create_test_data(self):
         self.connect()

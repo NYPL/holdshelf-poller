@@ -30,7 +30,17 @@ class TestPoller:
 
     @pytest.fixture
     def platform_api_client_post(self, mocker):
-        return mocker.patch('lib.poller.Oauth2ApiClient.post')
+        mock = mocker.patch('lib.poller.Oauth2ApiClient.post')
+        mock.return_value = mocker.MagicMock()
+        mock.return_value.status_code = 200
+        return mock
+
+    @pytest.fixture
+    def platform_api_client_post_failed(self, mocker):
+        mock = mocker.patch('lib.poller.Oauth2ApiClient.post')
+        mock.return_value = mocker.MagicMock()
+        mock.return_value.status_code = 500
+        return mock
 
     def test_unprocessed_uses_redis(self, redis_get_hold_processed):
         # If RedisClient.get_hold_processed() returns false, Poller considers
@@ -63,8 +73,19 @@ class TestPoller:
         mock_holds = [{'hold_id': 1, 'patron_id': 9001}]
         Poller().send_notifications(mock_holds)
 
-        # Verify we record hold processed in Redis:
-        redis_set_hold_processed.assert_called_once_with(mock_holds[0])
         # Verify we post to PatronServices Notify endpoint:
         platform_api_client_post.assert_called_once_with(
                 'patrons/9001/notify', {'holdId': 1, 'type': 'hold-ready'})
+        # Verify we record hold processed in Redis:
+        redis_set_hold_processed.assert_called_once_with(mock_holds[0])
+
+    def test_send_notifications_failed(self, redis_set_hold_processed,
+                                       platform_api_client_post_failed):
+        mock_holds = [{'hold_id': 1, 'patron_id': 9001}]
+        Poller().send_notifications(mock_holds)
+
+        # Verify we post to PatronServices Notify endpoint:
+        platform_api_client_post_failed.assert_called_once_with(
+                'patrons/9001/notify', {'holdId': 1, 'type': 'hold-ready'})
+        # Verify we DO NOT record hold processed in Redis:
+        redis_set_hold_processed.assert_not_called()

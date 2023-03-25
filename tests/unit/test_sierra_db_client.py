@@ -2,7 +2,7 @@ import pytest
 
 from tests.test_helpers import TestHelpers
 from lib.sierra_db_client import SierraDbClient
-from nypl_py_utils import (PostgreSQLClient)
+from nypl_py_utils.classes.postgresql_client import PostgreSQLClient
 
 
 class TestSierraDbClient:
@@ -17,8 +17,9 @@ class TestSierraDbClient:
 
     @pytest.fixture
     def mock_pg_execute_query(self, mocker):
-        mocker.patch('psycopg_pool.ConnectionPool.connection')
+        mocker.patch('psycopg.connect')
         mocker.patch.object(PostgreSQLClient, 'connect')
+        mocker.patch.object(PostgreSQLClient, 'close_connection')
 
         mock = mocker.patch.object(PostgreSQLClient, 'execute_query')
         mock.return_value = [

@@ -1,7 +1,8 @@
 from lib.redis_client import RedisClient
 from lib.sierra_db_client import SierraDbClient
 from nypl_py_utils.functions.log_helper import create_log
-from nypl_py_utils import Oauth2ApiClient
+from nypl_py_utils.classes.oauth2_api_client import Oauth2ApiClient
+from requests import HTTPError
 
 
 class Poller:
@@ -17,7 +18,8 @@ class Poller:
         self.platform_client = Oauth2ApiClient()
 
     def poll(self):
-        """Retrieve holdshelf entries from Sierra, remove processed entries,
+        """
+        Retrieve holdshelf entries from Sierra, remove processed entries,
         and send notifications for what remains.
         """
         self.logger.info('Starting polling')
@@ -36,7 +38,6 @@ class Poller:
         self.logger.info('Done polling')
 
     def unprocessed(self, entry):
-        return True
         """Returns true if given entry is not yet processed"""
         return not self.redis_client.get_hold_processed(entry)
 
@@ -54,9 +55,21 @@ class Poller:
             path = 'patrons/{}/notify'.format(entry['patron_id'])
             payload = {'type': 'hold-ready', 'holdId': entry['hold_id']}
 
-            self.logger.debug(f'Posting to {path}: {payload}')
-            resp = self.platform_client.post(path, payload)
-            print(f'resp: {resp}')
-            import pdb; pdb.set_trace()
+            # Post to PatronServices notify endpoint:
+            resp = None
+            try:
+                resp = self.platform_client.post(path, payload)
+            except HTTPError as e:
+                resp = e.response
 
-            self.redis_client.set_hold_processed(entry)
+            # Assert 200 response:
+            if resp and resp.status_code == 200:
+                # Mark hold as processed:
+                self.redis_client.set_hold_processed(entry)
+            elif resp is not None:
+                self.logger.error('Unexpected response from PatronServices'
+                                  + f' notify endpoint for {path} {payload}'
+                                  + f' => {resp.status_code} {resp.content}')
+            else:
+                self.logger.error('No response from PatronServices'
+                                  + f' notify endpoint for {path} {payload}')
