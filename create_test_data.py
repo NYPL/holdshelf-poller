@@ -3,7 +3,7 @@
 This is a script for generating test holdshelf events in the local psql db.
 
 Usage:
-    AWS_PROFILE=nypl-digital-dev ENVIRONMENT=development \
+    [AWS_PROFILE=nypl-digital-dev] \
         python create_test_data.py
 
 """
@@ -11,13 +11,13 @@ Usage:
 import os
 import datetime
 
-from nypl_py_utils import PostgreSQLClient, PostgreSQLClientError
+from nypl_py_utils.classes.postgresql_client import PostgreSQLClient
 from nypl_py_utils.functions.config_helper import load_env_file
 from nypl_py_utils.functions.log_helper import create_log
 
 HOLDS = [
-    [1, 10001, 'i', 'YYYY-MM-DDT08:11:01', 'mal'],
-    [2, 10002, 'i', 'YYYY-MM-DDT08:31:01', 'mal']
+    [1, 10001, 'i', 'YYYY-MM-DDT08:11:01', 'mal', 9001],
+    [2, 10002, 'i', 'YYYY-MM-DDT08:31:01', 'mal', 9002]
 ]
 
 ITEMS = [
@@ -25,11 +25,16 @@ ITEMS = [
     (10002, 102, 'maf92')
 ]
 
+PATRONS = [
+    (9001, 91),
+    (9002, 92)
+]
+
 
 class CreateTestData:
 
     def connect(self):
-        load_env_file(os.environ['ENVIRONMENT'], 'config/development.yaml')
+        load_env_file('', 'config/development.yaml')
         self.sierra_client = PostgreSQLClient(
             '127.0.0.1',
             os.environ['SIERRA_DB_PORT'],
@@ -48,32 +53,23 @@ class CreateTestData:
         query = 'INSERT INTO sierra_view.{} VALUES ({})'.format(
             table, value_placeholders_str)
         self.logger.debug(f' => {query} < {row}')
-        self.sierra_client.execute_query(query, query_params=row,
-                                         is_write_query=True)
+        self.db_query(query, row)
 
-    def db_query(self, query, data=None):
-        with self.sierra_client.pool.connection() as conn:
-            try:
-                conn.execute(query, data)
-            except Exception as e:
-                conn.rollback()
-                self.logger.error(
-                    ('Error executing database query \'{query}\': '
-                     '{error}').format(query=query, error=e))
-                raise PostgreSQLClientError(
-                    ('Error executing database query \'{query}\': '
-                     '{error}').format(query=query, error=e)) from None
+    def db_query(self, query, query_params=None):
+        self.sierra_client.execute_query(query, query_params)
 
     def create_test_data(self):
         self.connect()
 
         self.logger.info('Truncating tables')
-        for table in ['hold', 'item_view']:
+        for table in ['hold', 'item_view', 'patron_view']:
             self.db_query('TRUNCATE TABLE sierra_view.{}'.format(table))
 
         self.logger.info('Filling tables')
         for row in ITEMS:
             self.insert_data('item_view', row)
+        for row in PATRONS:
+            self.insert_data('patron_view', row)
         for row in HOLDS:
             current_date = datetime.date.today().isoformat()
             row[3] = row[3].replace('YYYY-MM-DD', current_date)

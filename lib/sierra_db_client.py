@@ -1,5 +1,5 @@
 import os
-from nypl_py_utils import (PostgreSQLClient)
+from nypl_py_utils.classes.postgresql_client import PostgreSQLClient
 from psycopg.rows import dict_row
 from nypl_py_utils.functions.log_helper import create_log
 
@@ -24,7 +24,7 @@ class SierraDbClient:
             List of dicts representing items on holdshelf
         """
 
-        self.base_client.connect()
+        self.base_client.connect(row_factory=dict_row)
 
         min_placed_gmt = "DATE(NOW()) - INTERVAL '1 DAYS'"
         # min_placed_gmt = "'2022-07-05 19:22:29-04'"
@@ -38,7 +38,10 @@ class SierraDbClient:
               placed_gmt,
               I.record_num AS item_id,
               I.location_code AS item_location,
-              H.pickup_location_code AS pickup_location
+              H.pickup_location_code AS pickup_location,
+              ( SELECT _P.record_num FROM sierra_view.patron_view _P
+                WHERE _P.id=H.patron_record_id
+              ) AS patron_id
             FROM sierra_view.hold H
             INNER JOIN sierra_view.item_view I ON I.id=H.record_id
             WHERE H.status='i'
@@ -51,8 +54,7 @@ class SierraDbClient:
                 holding_location_codes=self._sql_string_list(holding_locations)
             )
 
-        sierra_raw_data = self.base_client.execute_query(query,
-                                                         row_factory=dict_row)
+        sierra_raw_data = self.base_client.execute_query(query)
 
         self.base_client.close_connection()
 
