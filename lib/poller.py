@@ -1,3 +1,4 @@
+import os
 from lib.redis_client import RedisClient
 from lib.sierra_db_client import SierraDbClient
 from nypl_py_utils.functions.log_helper import create_log
@@ -26,14 +27,18 @@ class Poller:
 
         entries = self.sierra_client.holdshelf_entries()
 
-        self.logger.info(f'Found {len(entries)} holdshelf entries')
+        unfiltered_entries_count = len(entries)
         try:
             entries = list(filter(self.unprocessed, entries))
         except Exception as error:
             self.logger.error(f'Redis read error; Aborting. Error: {error}')
             return
+        self.logger.info(
+            f'Found {unfiltered_entries_count} holdshelf entries' +
+            f' - {len(entries)} of them new')
 
-        self.send_notifications(entries)
+        if os.environ.get('DISABLE_NOTIFICATIONS', 'false') == 'false':
+            self.send_notifications(entries)
 
         self.logger.info('Done polling')
 
