@@ -46,6 +46,8 @@ Note test data is created with current timestamps, so if you see "Found 0 holdsh
 AWS_PROFILE=nypl-digital-dev ENVIRONMENT=development python create_test_data.py
 ```
 
+To disable notifications (i.e. to test Sierra connection or run the poller in a "dry run" mode), add `DISABLE_NOTIFICATIONS=true`
+
 ## Contributing
 
 This repo uses the [Main-QA-Production Git Workflow](https://github.com/NYPL/engineering-general/blob/main/standards/git-workflow.md#main-qa-production)
