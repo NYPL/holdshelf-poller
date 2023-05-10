@@ -58,7 +58,7 @@ class Poller:
 
         for entry in entries:
             path = 'patrons/{}/notify'.format(entry['patron_id'])
-            payload = {'type': 'hold-ready', 'holdId': entry['hold_id']}
+            payload = {'type': 'hold-ready', 'sierraHoldId': entry['hold_id']}
 
             # Post to PatronServices notify endpoint:
             resp = None
