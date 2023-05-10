@@ -75,7 +75,7 @@ class TestPoller:
 
         # Verify we post to PatronServices Notify endpoint:
         platform_api_client_post.assert_called_once_with(
-                'patrons/9001/notify', {'holdId': 1, 'type': 'hold-ready'})
+                'patrons/9001/notify', {'sierraHoldId': 1, 'type': 'hold-ready'})
         # Verify we record hold processed in Redis:
         redis_set_hold_processed.assert_called_once_with(mock_holds[0])
 
@@ -86,6 +86,6 @@ class TestPoller:
 
         # Verify we post to PatronServices Notify endpoint:
         platform_api_client_post_failed.assert_called_once_with(
-                'patrons/9001/notify', {'holdId': 1, 'type': 'hold-ready'})
+                'patrons/9001/notify', {'sierraHoldId': 1, 'type': 'hold-ready'})
         # Verify we DO NOT record hold processed in Redis:
         redis_set_hold_processed.assert_not_called()
