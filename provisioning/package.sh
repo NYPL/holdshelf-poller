@@ -1,4 +1,4 @@
-rm -r build
+rm -rf build
 
 # Build dependencies:
 pip install -r requirements.txt --target ./build

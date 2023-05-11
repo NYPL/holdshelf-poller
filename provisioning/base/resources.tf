@@ -20,7 +20,7 @@ variable "vpc_config" {
 
 # Upload the zipped app to S3:
 resource "aws_s3_object" "uploaded_zip" {
-  bucket = "nypl-travis-builds-${var.environment}"
+  bucket = "nypl-github-actions-builds-${var.environment}"
   key    = "holdshelf-poller-${var.environment}-dist.zip"
   acl    = "private"
   source = "../../build/build.zip"
