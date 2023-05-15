@@ -26,8 +26,11 @@ class SierraDbClient:
 
         self.base_client.connect(row_factory=dict_row)
 
-        min_placed_gmt = "DATE(NOW()) - INTERVAL '1 DAYS'"
-        # min_placed_gmt = "'2022-07-05 19:22:29-04'"
+        # Assume a polling period of 4 minutes. Let's look at holdshelf events
+        # in the last 20 minutes to ensure that transient issues in the
+        # PatronServices app are accommodated by at least one retry:
+        age_of_holds = int(os.environ.get('AGE_OF_HOLDS_TO_QUERY_MINUTES', '20'))
+        min_placed_gmt = f"NOW() - INTERVAL '{age_of_holds} MINUTES'"
 
         pickup_locations = os.environ['PICKUP_LOCATION_CODES'].split(',')
         holding_locations = os.environ['HOLDING_LOCATION_CODES'].split(',')
