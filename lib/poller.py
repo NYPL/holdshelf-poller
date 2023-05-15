@@ -76,6 +76,7 @@ class Poller:
         # The patron is allowed if there's no configured ONLY_NOTIFY_PATRON_IDS
         if allowed_ids_str == '':
             return True
+
         # The patron is allowed if a configured ONLY_NOTIFY_PATRON_IDS that contains the patron_id:
         allowed_ids = allowed_ids_str.split(',')
         patron_id = entry['patron_id']
