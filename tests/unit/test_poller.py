@@ -1,3 +1,4 @@
+import os
 import pytest
 
 from tests.test_helpers import TestHelpers
@@ -53,6 +54,38 @@ class TestPoller:
         redis_get_hold_processed.return_value = True
         assert Poller().unprocessed({'hold_id': 2}) is False
         redis_get_hold_processed.assert_called_with({'hold_id': 2})
+
+    def test_patron_notification_allowed(self):
+        # With no ONLY_NOTIFY_PATRON_IDS, assert patron 10 allowed:
+        assert Poller().patron_notification_allowed({'hold_id': 1, 'patron_id': 10}) is True
+
+        # With ONLY_NOTIFY_PATRON_IDS='20,10', assert patron 10 allowed:
+        os.environ['ONLY_NOTIFY_PATRON_IDS'] = '20,10'
+        assert Poller().patron_notification_allowed({'hold_id': 1, 'patron_id': 10}) is True
+
+        del os.environ['ONLY_NOTIFY_PATRON_IDS']
+
+    def test_patron_notification_disallowed(self):
+        # With ONLY_NOTIFY_PATRON_IDS='20', assert patron 10 disallowed:
+        os.environ['ONLY_NOTIFY_PATRON_IDS'] = '20'
+        assert Poller().patron_notification_allowed({'hold_id': 1, 'patron_id': 10}) is False
+
+        # With ONLY_NOTIFY_PATRON_IDS='30,20', assert patron 10 disallowed:
+        os.environ['ONLY_NOTIFY_PATRON_IDS'] = '30,20'
+        assert Poller().patron_notification_allowed({'hold_id': 1, 'patron_id': 10}) is False
+
+        del os.environ['ONLY_NOTIFY_PATRON_IDS']
+
+    def test_filter_out_disallowed(self):
+        # With no ONLY_NOTIFY_PATRON_IDS, assert patron 10 allowed:
+        entries = [{'hold_id': 1, 'patron_id': 10}]
+        assert Poller().filter_out_disallowed(entries)[0]['patron_id'] == 10
+
+        # With ONLY_NOTIFY_PATRON_IDS='20,10', assert patron 10 disallowed:
+        os.environ['ONLY_NOTIFY_PATRON_IDS'] = '20'
+        assert len(Poller().filter_out_disallowed(entries)) == 0
+
+        del os.environ['ONLY_NOTIFY_PATRON_IDS']
 
     def test_poll(self, sierra_holdshelf_entries, redis_get_hold_processed,
                   mocker):
