@@ -1,16 +1,16 @@
 ---
 PLAINTEXT_VARIABLES:
-    AWS_REGION: us-east-1
+    AGE_OF_HOLDS_TO_QUERY_HOURS: 48
     HOLDING_LOCATION_CODES: mal92,mal98,mal99,mag92,maf92,maf98,maf99,mas92,map92,map98
+    LOG_LEVEL: debug
+    NYPL_API_TOKEN_URL: https://isso.nypl.org/oauth/token
+    NYPL_API_BASE_URL: https://qa-platform.nypl.org/api/v0.1
     PICKUP_LOCATION_CODES: mal
     SIERRA_DB_HOST: 127.0.0.1
     SIERRA_DB_PORT: 5432
     SIERRA_DB_NAME: sierra_local_item_status_listener
     SIERRA_DB_USER: postgres
     SIERRA_DB_PASSWORD:
-    LOG_LEVEL: debug
-    NYPL_API_TOKEN_URL: https://isso.nypl.org/oauth/token
-    NYPL_API_BASE_URL: https://qa-platform.nypl.org/api/v0.1
 ENCRYPTED_VARIABLES:
     REDIS_HOST: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAJIwgY8GCSqGSIb3DQEHBqCBgTB/AgEAMHoGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM+gAMM+CpcNP0FaJpAgEQgE1PGwL4gr/VKZtxdLLSaA8edyu17FfWphtZpYI92wVkDktdVcARyL6wDWWYsnKUYXbYfxEwyTy1QVmxQu53KeV9WPRG1wxNjyqi4SYRuQ==
     REDIS_PORT: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAGIwYAYJKoZIhvcNAQcGoFMwUQIBADBMBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDP8sOXotlgOf91oFZQIBEIAfy2WpzXXtYRWtvZKpMuibq+08Y51ckipzZmYgheew0w==
