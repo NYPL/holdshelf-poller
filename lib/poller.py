@@ -33,14 +33,23 @@ class Poller:
             (f' - {len(entries)} of them new' if len(entries) != 0 else ''))
         return entries
 
-    def filter_out_disallowed(self, entries):
+    def filter_out_disallowed_and_mark_processed(self, entries):
         """
         Given an array of holdshelf entries, returns subset that are allowed to be processed based on
         ONLY_NOTIFY_PATRON_IDS config, if set
         """
-        disallowed = [entry['patron_id'] for entry in entries if not self.patron_notification_allowed(entry)]
+        disallowed = [entry for entry in entries if not self.patron_notification_allowed(entry)]
         if len(disallowed) > 0:
-            self.logger.info(f'Removing {len(disallowed)} holdshelf entries for disallowed patrons: {disallowed}')
+            # Let's mark them as processed so that when we remove the ONLY_NOTIFY_PATRON_IDS config,
+            # we don't immediately process all active holdshelf entries found in the last 48 hours.
+            # (i.e. if a hold is currently barred due to a ONLY_NOTIFY_PATRON_IDS config, we should
+            # _never_ process it, even after removing said config.)
+            for entry in disallowed:
+                self.redis_client.set_hold_processed(entry)
+
+            disallowed_patrons = [entry['patron_id'] for entry in disallowed]
+            self.logger.info(f'Removing {len(disallowed_patrons)} holdshelf entries'
+                             ' for disallowed patrons: {disallowed_patrons}')
 
         entries = [e for e in entries if self.patron_notification_allowed(e)]
         return entries
@@ -56,8 +65,8 @@ class Poller:
 
         # Remove entries we have already processed:
         entries = self.filter_out_processed(entries)
-        # Remove entries we're configured to ignore:
-        entries = self.filter_out_disallowed(entries)
+        # Remove entries we're configured to ignore (and mark them as processed):
+        entries = self.filter_out_disallowed_and_mark_processed(entries)
 
         if len(entries) > 0:
             if os.environ.get('DISABLE_NOTIFICATIONS', 'False') == 'False':
