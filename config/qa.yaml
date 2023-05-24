@@ -5,7 +5,7 @@ PLAINTEXT_VARIABLES:
     LOG_LEVEL: info
     NYPL_API_BASE_URL: https://qa-platform.nypl.org/api/v0.1
     NYPL_API_TOKEN_URL: https://isso.nypl.org/oauth/token
-    ONLY_NOTIFY_PATRON_IDS:
+    ONLY_NOTIFY_PATRON_IDS: 5427701
     PICKUP_LOCATION_CODES: mal
     SIERRA_DB_NAME: iii
     SIERRA_DB_PORT: 1032
