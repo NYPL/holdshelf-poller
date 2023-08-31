@@ -1,7 +1,7 @@
 ---
 PLAINTEXT_VARIABLES:
     AGE_OF_HOLDS_TO_QUERY_HOURS: 72
-    HOLDING_LOCATION_CODES: mal92,mal98,mal99,mag92,maf92,maf98,maf99,mas92,map92,map98
+    HOLDING_LOCATION_CODES: mal92,mal98,mal99,mag92,maf92,maf98,maf99,mas92,map92,map98,mab82,maf82,mag82,mai82,map82
     LOG_LEVEL: info
     NYPL_API_BASE_URL: https://platform.nypl.org/api/v0.1
     NYPL_API_TOKEN_URL: https://isso.nypl.org/oauth/token
