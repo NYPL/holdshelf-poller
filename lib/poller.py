@@ -49,7 +49,7 @@ class Poller:
 
             disallowed_patrons = [entry['patron_id'] for entry in disallowed]
             self.logger.info(f'Removing {len(disallowed_patrons)} holdshelf entries'
-                             ' for disallowed patrons: {disallowed_patrons}')
+                             f' for disallowed patrons: {disallowed_patrons}')
 
         entries = [e for e in entries if self.patron_notification_allowed(e)]
         return entries
