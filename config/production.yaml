@@ -1,11 +1,11 @@
 ---
 PLAINTEXT_VARIABLES:
     AGE_OF_HOLDS_TO_QUERY_HOURS: 72
-    HOLDING_LOCATION_CODES: mal92,mal98,mal99,mag92,maf92,maf98,maf99,mas92,map92,map98,mab82,maf82,mag82,mai82,map82,mal82
+    HOLDING_LOCATION_CODES: mal92,mal98,mal99,mag92,maf92,maf98,maf99,mas92,map92,map98,mab82,maf82,mag82,mai82,map82,rc,rc2cf,rc2cm,rc2ma,rc2mj,rc2sl,rcca9,rccb2,rccb8,rccb9,rccd2,rccd8,rccd9,rcce2,rcce8,rcce9,rccf2,rccf8,rccf9,rcma2,rcmb2,rcmb8,rcmb9,rcmf2,rcmf8,rcmf9,rcmg2,rcmg8,rcmg9,rcmi2,rcmj2,rcml2,rcml8,rcmo2,rcmp2,rcmq2,rcmr2,rcms2,rcpd2,rcpd8,rcpd9,rcpf8,rcpf8,rcph2,rcph8,rcph9,rcpm2,rcpm8,rcpm9,rcpv2,rcpv8,rcpv9,rcpt2,rcpt8,rcpt9,rcsl2,rcx28,rcxx2,
     LOG_LEVEL: info
     NYPL_API_BASE_URL: https://platform.nypl.org/api/v0.1
     NYPL_API_TOKEN_URL: https://isso.nypl.org/oauth/token
-    PICKUP_LOCATION_CODES: mal
+    PICKUP_LOCATION_CODES: ma,ma0b,ma0p,mab,mab0v,mab01,mab62,mab72,mab82,mab88,mab89,mab92,mab98,mab99,mabb1,mabb2,mabb3,mabm2,mac,mac82,macc2,mae,mae82,maedd,maee2,maf,maf82,maf88,maf92,maf98,maf99,maff1,maff3,mag,mag82,mag92,mag98,magg1,magg2,magg3,magh1,mai,mai32,mai82,mai83,mai87,mai92,maii1,maii2,maii3,mak,mak82,makk3,mal,mal17,mal72,mal82,mal92,mal98,mal99,mala,mala1,malc,mall1,malm2,maln,maln1,malv2,malw,malw1,mao,mao82,mao92,maor2,map,map08,map32,map42,map82,map92,map98,mapp1,mapp2,mapp3,mapp8,mapp9,maq,maqq2,mar,mar62,mar82,mar92,mard2,marr2,mas,mas62,mas82,mas92,masb2,mass2,masu2,matel,mau,mauu1,mauu2,max,max82,may,mazzz,
     SIERRA_DB_NAME: iii
     SIERRA_DB_PORT: 1032
 ENCRYPTED_VARIABLES:
