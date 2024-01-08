@@ -5,7 +5,7 @@ PLAINTEXT_VARIABLES:
     LOG_LEVEL: info
     NYPL_API_BASE_URL: https://qa-platform.nypl.org/api/v0.1
     NYPL_API_TOKEN_URL: https://isso.nypl.org/oauth/token
-    PICKUP_LOCATION_CODES: mab,maf,mag,mal,mal17,mala,malc,maln,malw,map
+    PICKUP_LOCATION_CODES: mab,maf,mag,mal,mal17,mala,malc,maln,malw,map,sc
     SIERRA_DB_NAME: iii
     SIERRA_DB_PORT: 1032
 ENCRYPTED_VARIABLES:
