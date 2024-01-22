@@ -1,7 +1,7 @@
 ---
 PLAINTEXT_VARIABLES:
     AGE_OF_HOLDS_TO_QUERY_HOURS: 72
-    HOLDING_LOCATION_CODES: os,mal92,mal98,mal99,mag92,maf92,maf98,maf99,mas92,map92,map98,mab82,maf82,mag82,mai82,map82,mal82,rc2cf,rc2cm,rc2ma,rc2mj,rc2sl,rcca9,rccb2,rccb8,rccb9,rccd2,rccd8,rccd9,rcce2,rcce8,rcce9,rccf2,rccf8,rccf9,rcma2,rcmb2,rcmb8,rcmb9,rcmf2,rcmf8,rcmf9,rcmg2,rcmg8,rcmg9,rcmi2,rcmj2,rcml2,rcml8,rcmo2,rcmp2,rcmq2,rcmr2,rcms2,rcpd2,rcpd8,rcpd9,rcpf8,rcpf8,rcph2,rcph8,rcph9,rcpm2,rcpm8,rcpm9,rcpv2,rcpv8,rcpv9,rcpt2,rcpt8,rcpt9,rcsl2,rcx28,rcxx2,scff2,scff3
+    HOLDING_LOCATION_CODES: os,mal92,mal98,mal99,mag92,maf92,maf98,maf99,mas92,map92,map98,mab82,maf82,mag82,mai82,map82,mal82,rc2cf,rc2cm,rc2ma,rc2mj,rc2sl,rcca9,rccb2,rccb8,rccb9,rccd2,rccd8,rccd9,rcce2,rcce8,rcce9,rccf2,rccf8,rccf9,rcma2,rcmb2,rcmb8,rcmb9,rcmf2,rcmf8,rcmf9,rcmg2,rcmg8,rcmg9,rcmi2,rcmj2,rcml2,rcml8,rcmo2,rcmp2,rcmq2,rcmr2,rcms2,rcpd2,rcpd8,rcpd9,rcpf8,rcpf8,rcph2,rcph8,rcph9,rcpm2,rcpm8,rcpm9,rcpv2,rcpv8,rcpv9,rcpt2,rcpt8,rcpt9,rcsl2,rcx28,rcxx2,scff3,scff2
     LOG_LEVEL: info
     NYPL_API_BASE_URL: https://qa-platform.nypl.org/api/v0.1
     NYPL_API_TOKEN_URL: https://isso.nypl.org/oauth/token
