@@ -1,6 +1,6 @@
 ---
 PLAINTEXT_VARIABLES:
-    AGE_OF_HOLDS_TO_QUERY_HOURS: 72
+    AGE_OF_HOLDS_TO_QUERY_HOURS: 144
     HOLDING_LOCATION_CODES: mal92,mal98,mal99,mag92,maf92,maf98,maf99,mas92,map92,map98
     LOG_LEVEL: debug
     NYPL_API_BASE_URL: https://qa-platform.nypl.org/api/v0.1
