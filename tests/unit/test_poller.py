@@ -43,6 +43,14 @@ class TestPoller:
         mock.return_value.status_code = 500
         return mock
 
+    @pytest.fixture
+    def platform_api_client_missing_email(self, mocker):
+        mock = mocker.patch('lib.poller.Oauth2ApiClient.post')
+        mock.return_value = mocker.MagicMock()
+        mock.return_value.status_code = 400
+        mock.return_value.content = {"Message": "Unable to find patron email"}
+        return mock
+
     def test_unprocessed_uses_redis(self, redis_get_hold_processed):
         # If RedisClient.get_hold_processed() returns false, Poller considers
         # it unprocessed
@@ -124,3 +132,14 @@ class TestPoller:
                 'patrons/9001/notify', {'sierraHoldId': 1, 'type': 'hold-ready'})
         # Verify we DO NOT record hold processed in Redis:
         redis_set_hold_processed.assert_not_called()
+
+    def test_send_notifications_patron_missing_email(self, redis_set_hold_processed,
+                                                     platform_api_client_missing_email):
+        mock_holds = [{'hold_id': 1, 'patron_id': 9001}]
+        Poller().send_notifications(mock_holds)
+
+        # Verify we post to PatronServices Notify endpoint:
+        platform_api_client_missing_email.assert_called_once_with(
+                'patrons/9001/notify', {'sierraHoldId': 1, 'type': 'hold-ready'})
+        # Verify we record hold processed in Redis:
+        redis_set_hold_processed.assert_called_once_with(mock_holds[0])
