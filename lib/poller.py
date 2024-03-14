@@ -111,6 +111,8 @@ class Poller:
 
             # Post to PatronServices notify endpoint:
             resp = None
+            content = str(resp.content)
+            index = content.find('Unable to find patron email')
             try:
                 resp = self.platform_client.post(path, payload)
             except HTTPError as e:
@@ -120,7 +122,7 @@ class Poller:
             if resp and resp.status_code == 200:
                 # Mark hold as processed:
                 self.redis_client.set_hold_processed(entry)
-            elif resp and resp.status_code == 400 and str(resp.content).find('Unable to find patron email') > -1:
+            elif resp and resp.status_code == 400 and index > -1:
                 # If the notification fails because the patron is missing an email,
                 # log the issue but do not retry
                 self.logger.warning('Unexpected response from PatronServices'
@@ -128,8 +130,7 @@ class Poller:
                                     + f' => {resp.status_code} {resp.content}')
                 self.redis_client.set_hold_processed(entry)
             elif resp is not None:
-                content = str(resp.content)
-                index = content.find('Unable to find patron email')
+
                 self.logger.error('Unexpected response from PatronServices'
                                   + f' notify endpoint for {path} {payload}'
                                   + f' => {resp.status_code} {resp.content}'
