@@ -130,7 +130,8 @@ class Poller:
             elif resp is not None:
                 self.logger.error('Unexpected response from PatronServices'
                                   + f' notify endpoint for {path} {payload}'
-                                  + f' => {resp.status_code} {resp.content}')
+                                  + f' => {resp.status_code} {resp.content}'
+                                  + f' debugging: {type(resp.status_code)}, {resp.status_code}, {resp.status_code == 400}, {type(resp.content)}, {resp.content}, {str(resp.content).find('Unable to find patron email')}')
             else:
                 self.logger.error('No response from PatronServices'
                                   + f' notify endpoint for {path} {payload}')
