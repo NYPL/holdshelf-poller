@@ -111,13 +111,13 @@ class Poller:
 
             # Post to PatronServices notify endpoint:
             resp = None
-            content = str(resp.content)
-            index = content.find('Unable to find patron email')
             try:
                 resp = self.platform_client.post(path, payload)
             except HTTPError as e:
                 resp = e.response
 
+            content = str(resp.content)
+            index = content.find('Unable to find patron email')
             # Assert 200 response:
             if resp and resp.status_code == 200:
                 # Mark hold as processed:
