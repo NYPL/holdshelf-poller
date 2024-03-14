@@ -128,9 +128,16 @@ class Poller:
                                     + f' => {resp.status_code} {resp.content}')
                 self.redis_client.set_hold_processed(entry)
             elif resp is not None:
+                content = str(resp.content)
+                index = content.find('Unable to find patron email')
                 self.logger.error('Unexpected response from PatronServices'
                                   + f' notify endpoint for {path} {payload}'
-                                  + f' => {resp.status_code} {resp.content}')
+                                  + f' => {resp.status_code} {resp.content}'
+                                  + ' debugging: '
+                                  + f'{type(resp.status_code)}, {resp.status_code}, {resp.status_code == 400}, '
+                                  + f' {type(resp.content)}, {resp.content}, '
+                                  + f' {str(resp.content)} '
+                                  + f' {index}')
             else:
                 self.logger.error('No response from PatronServices'
                                   + f' notify endpoint for {path} {payload}')
