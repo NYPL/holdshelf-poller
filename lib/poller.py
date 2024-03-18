@@ -120,6 +120,14 @@ class Poller:
             if resp and resp.status_code == 200:
                 # Mark hold as processed:
                 self.redis_client.set_hold_processed(entry)
+            # If the notification fails because the patron is missing an email,
+            # log the issue but do not retry
+            elif resp is not None and resp.status_code == 400 \
+                    and str(resp.content).find('Unable to find patron email') > -1:
+                self.logger.warning('Got no-email response from PatronServices'
+                                    + f' notify endpoint for {path} {payload}'
+                                    + f' => {resp.status_code} {resp.content}')
+                self.redis_client.set_hold_processed(entry)
             elif resp is not None:
                 self.logger.error('Unexpected response from PatronServices'
                                   + f' notify endpoint for {path} {payload}'
