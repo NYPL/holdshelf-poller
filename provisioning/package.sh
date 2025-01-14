@@ -1,5 +1,7 @@
 rm -rf build
 
+pyv="$(python -V 2>&1)"
+echo "Packaging with $pyv"
 # Build dependencies:
 pip install -r requirements.txt --target ./build
 # Have to specify this platform to get proper libpg binding in lambda:

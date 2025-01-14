@@ -8,6 +8,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
+          python-version: '3.9'
           cache: 'pip'
       - name: Install dependencies
         run: |
@@ -32,6 +33,11 @@ jobs:
           role-to-assume: arn:aws:iam::946183545209:role/GithubActionsDeployerRole
           aws-region: us-east-1
       - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
       - name: Package app
         run: provisioning/package.sh
       - uses: hashicorp/setup-terraform@v2
@@ -53,6 +59,11 @@ jobs:
           role-to-assume: arn:aws:iam::946183545209:role/GithubActionsDeployerRole
           aws-region: us-east-1
       - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
       - name: Package app
         run: provisioning/package.sh
       - uses: hashicorp/setup-terraform@v2
