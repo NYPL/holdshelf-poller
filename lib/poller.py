@@ -121,7 +121,7 @@ class Poller:
                 # Mark hold as processed:
                 self.redis_client.set_hold_processed(entry)
             # If the notification fails because of missing email, hold, or
-            # any other unable to find issue, log issue and mark hold as 
+            # any other unable to find issue, log issue and mark hold as
             # processed
             elif resp is not None and resp.status_code == 400:
                 self.logger.warning('Missing patron data for'
@@ -130,8 +130,8 @@ class Poller:
                 self.redis_client.set_hold_processed(entry)
             elif resp is not None:
                 self.logger.warning('Unexpected response from PatronServices'
-                                  + f' notify endpoint for {path} {payload}'
-                                  + f' => {resp.status_code} {resp.content}')
+                                    + f' notify endpoint for {path} {payload}'
+                                    + f' => {resp.status_code} {resp.content}')
             else:
                 self.logger.error('No response from PatronServices'
                                   + f' notify endpoint for {path} {payload}')
