@@ -1,13 +1,13 @@
 import os
 import redis
 import datetime
-from nypl_py_utils.functions.log_helper import create_log
+from lib.logger import logger
 
 
 class RedisClient:
     def __init__(self):
         self.base_client = self._create_base_client()
-        self.logger = create_log('redis_client')
+        self.logger = logger
 
     def key_for_hold(self, entry):
         return 'item-status-listener-processed-hold-{}'\

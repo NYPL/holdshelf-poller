@@ -2,6 +2,9 @@ import os
 
 from nypl_py_utils.functions.config_helper import load_env_file
 from lib.poller import Poller
+from lib.logger import logger
+from structlog.contextvars import bind_contextvars
+from datetime import datetime
 
 _has_run_init = None
 
@@ -15,6 +18,7 @@ def init():
 
 def handle_event(event=None, context=None):
     init()
+    bind_contextvars(time=str(datetime.now()))
 
     Poller().poll()
 

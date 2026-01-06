@@ -1,7 +1,7 @@
 import os
 from lib.redis_client import RedisClient
 from lib.sierra_db_client import SierraDbClient
-from nypl_py_utils.functions.log_helper import create_log
+from lib.logger import logger
 from nypl_py_utils.classes.oauth2_api_client import Oauth2ApiClient
 from requests import HTTPError
 
@@ -12,7 +12,7 @@ class Poller:
     """
 
     def __init__(self):
-        self.logger = create_log('poller')
+        self.logger = logger
 
         self.sierra_client = SierraDbClient()
         self.redis_client = RedisClient()
@@ -108,6 +108,7 @@ class Poller:
         for entry in entries:
             path = 'patrons/{}/notify'.format(entry['patron_id'])
             payload = {'type': 'hold-ready', 'sierraHoldId': entry['hold_id']}
+            self.logger.info(f'Processing hold ready {entry["hold_id"]}')
 
             # Post to PatronServices notify endpoint:
             resp = None
