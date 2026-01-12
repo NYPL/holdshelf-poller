@@ -25,7 +25,9 @@ class RedisClient:
         if result is not None:
             self.logger.debug(
                 '  Skip hold {}, already processed on {}'
-                .format(entry['hold_id'], result)
+                .format(entry['hold_id'], result),
+                hold_id = entry.get('hold_id'),
+                item_id = entry.get('item_id')
             )
         return result is not None
 
@@ -35,7 +37,9 @@ class RedisClient:
         timestamp = datetime.datetime.utcnow().isoformat()
         self.base_client.set(key, timestamp)
         self.logger.debug(
-            'Marked hold {} as processed'.format(entry['hold_id'])
+            'Marked hold {} as processed'.format(entry['hold_id']),
+            hold_id = entry.get('hold_id'),
+            item_id = entry.get('item_id')
         )
 
     def _create_base_client(self):
