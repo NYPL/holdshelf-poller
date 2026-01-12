@@ -110,8 +110,8 @@ class Poller:
             payload = {'type': 'hold-ready', 'sierraHoldId': entry['hold_id']}
             self.logger.info(
                 f'Processing hold ready {entry["hold_id"]}',
-                hold_id=entry.get("hold_id"),
-                item_id=entry.get("item_id")
+                holdId=entry.get("hold_id"),
+                itemId=entry.get("item_id")
             )
 
             # Post to PatronServices notify endpoint:
@@ -132,17 +132,17 @@ class Poller:
                 self.logger.warning('Missing patron data for'
                                     + f' notify endpoint for {path} {payload}'
                                     + f' => {resp.status_code} {resp.content}',
-                                    hold_id=entry.get("hold_id"),
-                                    item_id=entry.get("item_id"))
+                                    holdId=entry.get("hold_id"),
+                                    itemId=entry.get("item_id"))
                 self.redis_client.set_hold_processed(entry)
             elif resp is not None:
                 self.logger.warning('Unexpected response from PatronServices'
                                     + f' notify endpoint for {path} {payload}'
                                     + f' => {resp.status_code} {resp.content}',
-                                    hold_id=entry.get("hold_id"),
-                                    item_id=entry.get("item_id"))
+                                    holdId=entry.get("hold_id"),
+                                    itemId=entry.get("item_id"))
             else:
                 self.logger.error('No response from PatronServices'
                                   + f' notify endpoint for {path} {payload}',
-                                  hold_id=entry.get("hold_id"),
-                                  item_id=entry.get("item_id"))
+                                  holdId=entry.get("hold_id"),
+                                  itemId=entry.get("item_id"))
