@@ -1,13 +1,13 @@
 import os
 import redis
 import datetime
-from nypl_py_utils.functions.log_helper import create_log
+from lib.logger import logger
 
 
 class RedisClient:
     def __init__(self):
         self.base_client = self._create_base_client()
-        self.logger = create_log('redis_client')
+        self.logger = logger
 
     def key_for_hold(self, entry):
         return 'item-status-listener-processed-hold-{}'\
@@ -25,7 +25,9 @@ class RedisClient:
         if result is not None:
             self.logger.debug(
                 '  Skip hold {}, already processed on {}'
-                .format(entry['hold_id'], result)
+                .format(entry['hold_id'], result),
+                holdId=entry.get('hold_id'),
+                itemId=entry.get('item_id')
             )
         return result is not None
 
@@ -35,7 +37,9 @@ class RedisClient:
         timestamp = datetime.datetime.utcnow().isoformat()
         self.base_client.set(key, timestamp)
         self.logger.debug(
-            'Marked hold {} as processed'.format(entry['hold_id'])
+            'Marked hold {} as processed'.format(entry['hold_id']),
+            holdId=entry.get('hold_id'),
+            itemId=entry.get('item_id')
         )
 
     def _create_base_client(self):
