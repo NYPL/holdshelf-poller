@@ -1,7 +1,7 @@
 import os
 from nypl_py_utils.classes.postgresql_client import PostgreSQLClient
 from psycopg.rows import dict_row
-from nypl_py_utils.functions.log_helper import create_log
+from lib.logger import logger
 
 
 class SierraDbClient:
@@ -13,7 +13,7 @@ class SierraDbClient:
             os.environ['SIERRA_DB_USER'],
             os.environ['SIERRA_DB_PASSWORD']
         )
-        self.logger = create_log('sierra_db_client')
+        self.logger = logger
 
     def holdshelf_entries(self):
         """Get latest holdshelf entries from Sierra DB

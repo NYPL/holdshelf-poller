@@ -1,7 +1,7 @@
 import os
 from lib.redis_client import RedisClient
 from lib.sierra_db_client import SierraDbClient
-from nypl_py_utils.functions.log_helper import create_log
+from lib.logger import logger
 from nypl_py_utils.classes.oauth2_api_client import Oauth2ApiClient
 from requests import HTTPError
 
@@ -12,7 +12,7 @@ class Poller:
     """
 
     def __init__(self):
-        self.logger = create_log('poller')
+        self.logger = logger
 
         self.sierra_client = SierraDbClient()
         self.redis_client = RedisClient()
@@ -108,6 +108,11 @@ class Poller:
         for entry in entries:
             path = 'patrons/{}/notify'.format(entry['patron_id'])
             payload = {'type': 'hold-ready', 'sierraHoldId': entry['hold_id']}
+            self.logger.info(
+                f'Processing hold ready {entry["hold_id"]}',
+                holdId=entry.get("hold_id"),
+                itemId=entry.get("item_id")
+            )
 
             # Post to PatronServices notify endpoint:
             resp = None
@@ -126,12 +131,18 @@ class Poller:
             elif resp is not None and resp.status_code == 400:
                 self.logger.warning('Missing patron data for'
                                     + f' notify endpoint for {path} {payload}'
-                                    + f' => {resp.status_code} {resp.content}')
+                                    + f' => {resp.status_code} {resp.content}',
+                                    holdId=entry.get("hold_id"),
+                                    itemId=entry.get("item_id"))
                 self.redis_client.set_hold_processed(entry)
             elif resp is not None:
                 self.logger.warning('Unexpected response from PatronServices'
                                     + f' notify endpoint for {path} {payload}'
-                                    + f' => {resp.status_code} {resp.content}')
+                                    + f' => {resp.status_code} {resp.content}',
+                                    holdId=entry.get("hold_id"),
+                                    itemId=entry.get("item_id"))
             else:
                 self.logger.error('No response from PatronServices'
-                                  + f' notify endpoint for {path} {payload}')
+                                  + f' notify endpoint for {path} {payload}',
+                                  holdId=entry.get("hold_id"),
+                                  itemId=entry.get("item_id"))

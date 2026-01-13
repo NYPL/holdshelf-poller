@@ -1,4 +1,4 @@
 boto3
 pyyaml
-nypl-py-utils[oauth2-api-client,postgresql-client,config-helper]==1.0.0
+nypl-py-utils[oauth2-api-client,postgresql-client,config-helper,log-helper]==1.8.0
 redis
