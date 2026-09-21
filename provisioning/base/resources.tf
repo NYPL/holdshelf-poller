@@ -2,6 +2,10 @@ provider "aws" {
   region     = "us-east-1"
 }
 
+locals {
+  log_metric_name = "HoldShelfPollerLogError-${var.environment}"
+}
+
 variable "environment" {
   type = string
   default = "qa"
@@ -54,5 +58,57 @@ resource "aws_lambda_function" "lambda_instance" {
     variables = {
       ENVIRONMENT = var.environment
     }
+  }
+}
+
+data "aws_sns_topic" "rc_alarms" {
+  name = "research-catalog-team-alarms-${var.environment}"
+}
+
+resource "aws_cloudwatch_log_metric_filter" "error_metric_filter" {
+  name           = local.log_metric_name
+  pattern        = "ERROR"
+  log_group_name = "/aws/lambda/${aws_lambda_function.lambda_instance.function_name}"
+
+  metric_transformation {
+    name      = local.log_metric_name
+    namespace = "LogMetrics"
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "log_errors" {
+  alarm_name          = "HoldShelfPollerLogErrorAlarm-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = local.log_metric_name
+  namespace           = "LogMetrics"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Lambda function ${aws_lambda_function.lambda_instance.function_name} has more than 0 error logs in 5 minutes"
+  alarm_actions       = [data.aws_sns_topic.rc_alarms.arn]
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    FunctionName = aws_lambda_function.lambda_instance.function_name
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
+  alarm_name          = "HoldShelfPollerLambdaErrorAlarm-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "Errors"
+  namespace           = "AWS/Lambda"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Lambda function ${aws_lambda_function.lambda_instance.function_name} has more than 0 errors in 5 minutes"
+  alarm_actions       = [data.aws_sns_topic.rc_alarms.arn]
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    FunctionName = aws_lambda_function.lambda_instance.function_name
   }
 }
