@@ -85,7 +85,7 @@ resource "aws_cloudwatch_metric_alarm" "log_errors" {
   namespace           = "LogMetrics"
   period              = 300
   statistic           = "Sum"
-  threshold           = 0
+  threshold           = 1
   alarm_description   = "Lambda function ${aws_lambda_function.lambda_instance.function_name} has more than 0 error logs in 5 minutes"
   alarm_actions       = [data.aws_sns_topic.rc_alarms.arn]
   treat_missing_data  = "notBreaching"
@@ -103,7 +103,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
   namespace           = "AWS/Lambda"
   period              = 300
   statistic           = "Sum"
-  threshold           = 0
+  threshold           = 1
   alarm_description   = "Lambda function ${aws_lambda_function.lambda_instance.function_name} has more than 0 errors in 5 minutes"
   alarm_actions       = [data.aws_sns_topic.rc_alarms.arn]
   treat_missing_data  = "notBreaching"
