@@ -56,7 +56,7 @@ class CreateTestData:
         self.db_query(query, row)
 
     def db_query(self, query, query_params=None):
-        self.sierra_client.execute_query(query, query_params)
+        self.sierra_client.execute_query(query, query_params=query_params)
 
     def create_test_data(self):
         self.connect()
